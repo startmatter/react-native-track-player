@@ -24,7 +24,7 @@ class AVPlayerItemObserver: NSObject {
     
     private static var context = 0
     private let main: DispatchQueue = .main
-    
+    private let isStalled: Bool = false
     private struct AVPlayerItemKeyPath {
         static let duration = #keyPath(AVPlayerItem.duration)
         static let loadedTimeRanges = #keyPath(AVPlayerItem.loadedTimeRanges)

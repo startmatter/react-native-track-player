@@ -16,6 +16,7 @@ public enum PlaybackEndedReason: String {
     case skippedToNext
     case skippedToPrevious
     case jumpedToIndex
+    case stalled
 }
 
 class AVPlayerWrapper: AVPlayerWrapperProtocol {
@@ -27,6 +28,7 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
     // MARK: - Properties
     
     let avPlayer: AVPlayer
+    var isStalled: Bool?
     let playerObserver: AVPlayerObserver
     let playerTimeObserver: AVPlayerTimeObserver
     let playerItemNotificationObserver: AVPlayerItemNotificationObserver
@@ -188,6 +190,10 @@ extension AVPlayerWrapper: AVPlayerObserverDelegate {
     // MARK: - AVPlayerObserverDelegate
     
     func player(didChangeTimeControlStatus status: AVPlayer.TimeControlStatus) {
+        guard !(self.isStalled == true && status == .paused) else {
+            self.isStalled = false
+            return
+        }
         switch status {
         case .paused:
             if currentItem == nil {
@@ -244,6 +250,10 @@ extension AVPlayerWrapper: AVPlayerItemNotificationObserverDelegate {
     
     func itemDidPlayToEndTime() {
         delegate?.AVWrapper(itemPlaybackDoneWithReason: .playedUntilEnd)
+    }
+    
+    func didStalled() {
+        delegate?.AVWrapper(didStalled: true)
     }
     
 }

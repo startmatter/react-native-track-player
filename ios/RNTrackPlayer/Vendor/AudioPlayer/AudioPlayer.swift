@@ -27,6 +27,14 @@ public protocol AudioPlayerDelegate: class {
 }
 
 public class AudioPlayer: AVPlayerWrapperDelegate {
+    func AVWrapper(didStalled: Bool) {
+        self._wrapper.isStalled = true
+        guard self.rate == 0 && self.currentTime > 0 && self.currentTime < self.duration && self.wrapper.currentItem?.isPlaybackBufferEmpty == true else {
+            return
+        }
+        try? self.play()
+    }
+
     
     private var _wrapper: AVPlayerWrapperProtocol
     
