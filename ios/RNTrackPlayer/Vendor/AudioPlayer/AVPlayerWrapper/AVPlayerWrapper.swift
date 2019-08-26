@@ -16,7 +16,6 @@ public enum PlaybackEndedReason: String {
     case skippedToNext
     case skippedToPrevious
     case jumpedToIndex
-    case stalled
 }
 
 class AVPlayerWrapper: AVPlayerWrapperProtocol {
