@@ -10,11 +10,18 @@ import MediaPlayer
 
 public typealias AudioPlayerState = AVPlayerWrapperState
 
+public enum PlaybackStalledReason: String {
+    case beforeSongEnd
+    case slowNetwork
+}
+
 public protocol AudioPlayerDelegate: class {
     
     func audioPlayer(playerDidChangeState state: AudioPlayerState)
     
     func audioPlayer(itemPlaybackEndedWithReason reason: PlaybackEndedReason)
+    
+    func audioPlayer(playerDidStalled: String)
     
     func audioPlayer(secondsElapsed seconds: Double)
     
@@ -28,10 +35,15 @@ public protocol AudioPlayerDelegate: class {
 
 public class AudioPlayer: AVPlayerWrapperDelegate {
     func AVWrapper(didStalled: Bool) {
-        self._wrapper.isStalled = true
-        guard self.rate == 0 && self.currentTime > 0 && self.currentTime < self.duration && self.wrapper.currentItem?.isPlaybackBufferEmpty == true else {
+        guard self.rate == 0 && self.currentTime > 0 && self.currentTime < self.duration && self.wrapper.currentItem?.isPlaybackBufferEmpty == true && self._wrapper.playAttempts < 5 else {
+            self._wrapper.playAttempts = 0
+            self._wrapper.isStalled = false
+            self.delegate?.audioPlayer(playerDidStalled: PlaybackStalledReason.slowNetwork.rawValue)
             return
         }
+        self._wrapper.isStalled = true
+        self.delegate?.audioPlayer(playerDidStalled: PlaybackStalledReason.beforeSongEnd.rawValue)
+        self._wrapper.playAttempts += 1
         try? self.play()
     }
 

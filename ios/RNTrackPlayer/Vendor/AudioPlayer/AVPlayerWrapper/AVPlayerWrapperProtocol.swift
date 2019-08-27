@@ -21,7 +21,9 @@ protocol AVPlayerWrapperProtocol {
     
     var reasonForWaitingToPlay: AVPlayer.WaitingReason? { get }
     
-    var isStalled: Bool? { get set }
+    var isStalled: Bool { get set }
+    
+    var playAttempts: Int { get set }
     
     var rate: Float { get set }
     

@@ -27,7 +27,8 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
     // MARK: - Properties
     
     let avPlayer: AVPlayer
-    var isStalled: Bool?
+    var isStalled: Bool
+    var playAttempts: Int
     let playerObserver: AVPlayerObserver
     let playerTimeObserver: AVPlayerTimeObserver
     let playerItemNotificationObserver: AVPlayerItemNotificationObserver
@@ -52,7 +53,8 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
         self.playerTimeObserver = AVPlayerTimeObserver(player: avPlayer, periodicObserverTimeInterval: timeEventFrequency.getTime())
         self.playerItemNotificationObserver = AVPlayerItemNotificationObserver()
         self.playerItemObserver = AVPlayerItemObserver()
-        
+        self.playAttempts = 0
+        self.isStalled = false
         self.playerObserver.delegate = self
         self.playerTimeObserver.delegate = self
         self.playerItemNotificationObserver.delegate = self
