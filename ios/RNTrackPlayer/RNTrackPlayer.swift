@@ -29,6 +29,10 @@ public class RNTrackPlayer: RCTEventEmitter, AudioPlayerDelegate {
         sendEvent(withName: "playback-state", body: ["state": player.playerState.rawValue])
     }
     
+    public func audioPlayer(playerDidStalled message: String) {
+        sendEvent(withName: "playback-stalled", body: ["message": message])
+    }
+    
     public func audioPlayer(itemPlaybackEndedWithReason reason: PlaybackEndedReason) {
         if reason == .playedUntilEnd && player.nextItems.count == 0 {
             sendEvent(withName: "playback-queue-ended", body: [
@@ -103,6 +107,9 @@ public class RNTrackPlayer: RCTEventEmitter, AudioPlayerDelegate {
             "CAPABILITY_SET_RATING": "NOOP",
             "CAPABILITY_JUMP_FORWARD": Capability.jumpForward.rawValue,
             "CAPABILITY_JUMP_BACKWARD": Capability.jumpBackward.rawValue,
+            
+            "PLAYBACK_STALLED_SLOW_NETWORK": PlaybackStalledReason.slowNetwork.rawValue,
+            "PLAYBACK_STALLED_BEFORE_SONG_END": PlaybackStalledReason.beforeSongEnd.rawValue
         ]
     }
     
@@ -113,6 +120,7 @@ public class RNTrackPlayer: RCTEventEmitter, AudioPlayerDelegate {
             "playback-state",
             "playback-error",
             "playback-track-changed",
+            "playback-stalled",
             
             "remote-stop",
             "remote-pause",
