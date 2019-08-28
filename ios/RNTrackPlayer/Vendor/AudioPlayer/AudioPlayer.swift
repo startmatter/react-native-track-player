@@ -42,7 +42,9 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
             return
         }
         self._wrapper.isStalled = true
-        self.delegate?.audioPlayer(playerDidStalled: PlaybackStalledReason.beforeSongEnd.rawValue)
+        if(self._wrapper.playAttempts == 1) {
+            self.delegate?.audioPlayer(playerDidStalled: PlaybackStalledReason.beforeSongEnd.rawValue)
+        }
         self._wrapper.playAttempts += 1
         try? self.play()
     }
